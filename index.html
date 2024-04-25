@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Cricket Game</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="font-serif flex justify-center items-center  text-4xl">
+  <div class="border-2 border-black   rounded p-2 w-fit  text-center">
+    <h1 class="font-bold text-6xl ">Bat Ball Stump Game</h1> <br/>
+
+  <button class="choice-button hover:scale-125" onclick="
+  let computerChoice = generateComputerChoice();
+  let resultMsg = getResult('Bat', computerChoice);
+  showResult('Bat', computerChoice, resultMsg);
+  ">
+    <img src="https://images-eu.ssl-images-amazon.com/images/I/51b6WhZGNOL._AC_UL210_SR210,210_.jpg" alt="Bat Image" class="choice-image w-60" >  
+  </button>
+
+  <button class="choice-button hover:scale-125" onclick="
+    computerChoice = generateComputerChoice();
+    resultMsg = getResult('Ball', computerChoice);
+    showResult('Ball', computerChoice, resultMsg);
+  ">
+    <img src="https://4.imimg.com/data4/MV/DE/MY-7397124/red-cricket-ball-500x500.jpg" alt="Ball Image" class="choice-image w-40 ">  
+  </button>
+
+  <button class="choice-button px-16 hover:scale-125" onclick="
+    computerChoice = generateComputerChoice();
+    resultMsg = getResult('Stump', computerChoice);
+    showResult('Stump', computerChoice, resultMsg);
+  ">
+    <img src="https://m.media-amazon.com/images/I/51jlsZcRcEL._AC_UF894,1000_QL80_.jpg" alt="Stump Image" class="choice-image w-20">
+  </button> <br/><br/>
+
+  <h3 id="user-move"></h3>
+  <h3 id="computer-move"></h3>
+  <h3 id="result"></h3>
+  <h3 id="score"></h3> <hr> <br/>
+
+  <button onclick="localStorage.clear()
+      resetScore();
+  " class="p-1 px-4 rounded border-2 border-black bg-red-700 text-white hover:scale-150 hover:bg-green-500">Reset</button>
+  </div>
+
+  <script>
+    let scoreStr = localStorage.getItem('Score');
+    let score;
+    resetScore(scoreStr);
+
+    function resetScore(scoreStr) {
+      score = scoreStr ? JSON.parse(scoreStr) : {
+        win: 0,
+        lost: 0,
+        tie: 0,
+      };
+
+      score.displayScore = function() {
+        return `Score:Won:${score.win}, Lost:${score.lost}, Tie: ${score.tie}`;
+      };
+
+      showResult();
+    }
+
+    function generateComputerChoice() {
+      //This will generate random number between 0 and 3
+      let randomNumber = Math.random() * 3;
+      if (randomNumber > 0 && randomNumber <= 1) {
+        return 'Bat';
+      } else if (randomNumber > 1 && randomNumber <= 2) {
+        return 'Ball';
+      } else {
+        return 'Stump'
+      }
+    }
+
+    function getResult(userMove, computerMove) {
+      if (userMove === 'Bat') {
+        if (computerMove === 'Ball') {
+          score.win++;
+          return 'User won.';
+        } else if (computerMove === 'Bat') {
+          score.tie++;
+          return `It's a tie`;
+        } else if (computerMove === 'Stump') {
+          score.lost++;
+          return 'Computer has won';
+        }
+      } else if (userMove === 'Ball') {
+        if (computerMove === 'Ball') {
+          score.tie++;
+          return `It's a tie`;
+        } else if (computerMove === 'Bat') {
+          score.lost++;
+          return 'Computer has won';
+        } else if (computerMove === 'Stump') {
+          score.win++;
+          return 'User won.';
+        }
+      } else {
+        if (computerMove === 'Ball') {
+          score.lost++;
+          return 'Computer has won';
+        } else if (computerMove === 'Bat') {
+          score.win++;
+          return 'User won.';
+        } else if (computerMove === 'Stump') {
+          score.tie++;
+          return `It's a tie`;
+        }
+      }
+    }
+
+    function showResult(userMove, computerMove, result) {
+      localStorage.setItem('Score', JSON.stringify(score));
+      
+      document.querySelector('#user-move').innerText = 
+        userMove ? `You have chosen ${userMove}` : '';
+      
+      document.querySelector('#computer-move').innerText =
+        computerMove ? `Computer choice is ${computerMove}` : '';
+      
+      document.querySelector('#result').innerText = result || '';
+
+      document.querySelector('#score').innerText = score.displayScore();
+    }
+  </script>
+</body>
+</html>
